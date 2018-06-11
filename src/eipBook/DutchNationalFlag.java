@@ -1,19 +1,31 @@
 package eipBook;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class DutchNationalFlag {
 	
-	public void threeWayPartition(int[] arr, int pivotIndex){
+	public void quickSort(Integer[] arr, int l , int r){
 		
-		int p = arr[pivotIndex], smaller=0 , equal = 0 , larger=arr.length;
+		if(!(l<r))
+			return;
+		System.out.println("Array to be sorted ** "+Arrays.toString(arr));
+		System.out.println("l--> "+l+" r --> "+r);
+		int[] partRes = threeWayPartition(arr,l,r);
+		quickSort(arr,l , partRes[0]);
+		quickSort(arr, partRes[1],r);
+		//quickSort(arr, partRes[0],partRes[1]);
+		
+	}
+	
+	public int[] threeWayPartition(Integer[] arr, int smaller, int larger ){
+		
+		int p = arr[smaller], equal=smaller ;
 		
 		while(equal < larger){
+			//p = arr[equal];
 			System.out.println("smaller --> "+smaller+" equal --> "+equal+" larger --> "+larger);
 			//equal is always >= smaller
 			//element at smaller has already been examined (it must be =< p) hence after swap when advancing smaller pointer can advance equal has well
@@ -32,9 +44,12 @@ public class DutchNationalFlag {
 		}
 		System.out.println("smaller* --> "+smaller+" equal* --> "+equal+" larger* --> "+larger);
 		
+		return new int[]{smaller, equal};
+		
 	}
 	
-	private void swap(int[] arr, int i , int j){
+	
+	private void swap(Integer[] arr, int i , int j){
 		int tmp = arr[i];
 		arr[i] = arr[j];
 		arr[j] = tmp;
@@ -42,10 +57,15 @@ public class DutchNationalFlag {
 	
 	@Test
 	public void testThreeWayPartition(){
-		int a[] = {4, 9, 4, 4, 1, 9, 4, 4, 9, 4, 4, 1, 4};
-		threeWayPartition(a , 0);
+		//Integer a[] = {4, 9, 4, 4, 1, 9, 4, 4, 9, 4, 4, 1, 4};
+		Integer a[] = { 1,4, 4, 4, 9, 4, 9, 4, 9, 4, 4, 1, 4};
+		//Integer a[] = { 9,4, 4, 4, 1, 4, 9, 4, 9, 4, 4, 1, 4};
+		quickSort(a , 0,a.length);
+		
+		//threeWayPartition1(a,0);
+		
 		System.out.println(Arrays.toString(a));
-		assertTrue( Arrays.equals( new int[]{1,  1,  4,  4,  4,  4,  4 , 4 , 4 , 4,  9,  9,  9},a));
+		assertEquals( Arrays.asList(1,  1,  4,  4,  4,  4,  4 , 4 , 4 , 4,  9,  9,  9),Arrays.asList(a));
 	}
 
 }

@@ -409,6 +409,8 @@ public class TreeProblems {
 		 
 	    }
 	 
+	 
+	 //actually a trie
 	 private static class MultiTree{
 		 public  String val;
 		 public final ArrayList<MultiTree> children = new ArrayList<MultiTree>();
@@ -416,6 +418,108 @@ public class TreeProblems {
 			super();
 			this.val = val;
 		}
+	 }
+	 
+	 //kth smallest in a BST
+	 public int kthsmallest(TreeNode rt, int k) {
+         return kthSmallestInorder( rt,  k)[1];
+        }
+     private Integer[] kthSmallestInorder(TreeNode rt, int k){
+         if(rt == null){
+             return new Integer[]{0,null};
+         }
+         Integer[] ltRes =  kthSmallestInorder( rt.left,  k);
+         if(ltRes[1] != null){
+             return ltRes;
+         }
+         if(k==0 || ltRes[0].equals( k-1)){
+             return new Integer[]{k,rt.val};
+         }
+        Integer[] rtRes =  kthSmallestInorder( rt.right,  k-((Integer)ltRes[0]+1));
+         
+         if(rtRes[1] != null){
+             return rtRes;
+         }else{
+             return new Integer[]{(Integer)ltRes[0]+(Integer)rtRes[0]+1,null};
+         }
+     }
+
+	 
+	 
+	 //Sort hotel reviews by number of good words it has 
+	 public ArrayList<Integer> solve(String goodWords, ArrayList<String> reviews) {
+		 MyTrie dict = new MyTrie();
+		 String[] goodWordsArr = goodWords.split("_");
+		 for(int i=0;i<goodWordsArr.length;i++){
+			 dict.insert(goodWordsArr[i]);
+		 }
+		 int[][] index_goodWord = new int[reviews.size()][2];
+		 for(int i=0;i<reviews.size();i++){
+			 String[] reviewWords = reviews.get(i).split("_");
+			 int goodWordCount = 0;
+			 for(int j=0;j<reviewWords.length;j++){
+				 if(dict.contains(reviewWords[j])){
+					 goodWordCount++;
+				 }
+			 }
+			 index_goodWord[i] = new int[]{i,goodWordCount};
+		 }
+		 
+		 sortStable(index_goodWord,index_goodWord.length-1);
+		 ArrayList<Integer> res = new ArrayList<>();
+		 for(int i=0;i<index_goodWord.length;i++){
+			 res.add(index_goodWord[i][0]);
+		 }
+		 return res;
+	    }
+	 
+	 private void sortStable(int[][] xs, int n){
+		 if(n <= 0){
+			 return;
+		 }
+		 int[] curr = Arrays.copyOf(xs[n], 2) ;
+		 sortStable(xs,n-1);
+		 int i=n-1;
+		 for(;i>=0 && xs[i][1]< curr[1];i--){
+			 xs[i+1] = xs[i];
+		 }
+		 xs[++i]=curr;
+	 }
+	 
+	 private static class MyTrie{
+		 
+		 private final MyTrieNode root = new MyTrieNode();
+		 
+		 public void insert(String w){
+			 if( w==null || w.isEmpty()){
+				 return;
+			 }
+			 MyTrieNode curr=root;
+			 for(int i=0;i<w.length();i++){
+				 if(curr.children[w.charAt(i)-97] == null ){
+					 curr.children[w.charAt(i)-97] = new MyTrieNode();
+				 }
+					 curr =  curr.children[w.charAt(i)-97];
+				 
+				 if(i == w.length()-1){
+					 curr.isWord=true;
+				 }
+			 }
+		 }
+		 
+		 public boolean contains(String w){
+			 MyTrieNode curr = root;
+			 int i=0;
+			 for(; i<w.length() && curr.children[w.charAt(i)-97] != null ;curr=curr.children[w.charAt(i)-97],i++);
+			 return curr.isWord && !(i<w.length());
+			// return !(i<w.length());
+		 }
+		 
+		 
+		 private static class MyTrieNode{
+			 final public MyTrieNode[] children = new MyTrieNode[26];
+			 public boolean isWord;
+		 }
 	 }
 	// tests
 
@@ -599,6 +703,14 @@ public class TreeProblems {
 		assertEquals(new ArrayList<String>(Arrays.asList("abcdefgv" ,"abcdefgr", "abcdefgl", "abcdefgt", "abcdefa", "abcdefgws", "abcdefgh", "abcdefgwp" , "abcdefgcb", "abcdefgce")), prefix(new ArrayList<String>(Arrays.asList("abcdefgv", "abcdefgrr", "abcdefglj", "abcdefgtnsnfwzqfj", "abcdefafadr", "abcdefgwsofsbcnuv", "abcdefghffbsaq", "abcdefgwp", "abcdefgcb", "abcdefgcehch"  ))));
 	}
 	
+	
+	@Test
+	public void testHoteReviewsTrie(){
+		assertEquals(new ArrayList<Integer>(Arrays.asList(2, 0, 1)), solve("cool_ice_wifi",new ArrayList<String>(Arrays.asList("water_is_cool", "cold_ice_drink", "cool_wifi_speed"))));
+		assertEquals(new ArrayList<Integer>(Arrays.asList(2,0,1,3)), solve("coolsai",new ArrayList<String>(Arrays.asList("cool","sai","coolsai", "coolsaii"))));
+
+	}
+	
 
 	// utils
 	
@@ -617,6 +729,7 @@ public class TreeProblems {
 	public static void main(String[] args) {
 		System.out.println(Arrays.asList(1,2).indexOf(2));
 		System.out.println(Arrays.asList(1).subList(0,0));
+		System.out.println('a'-97);
 	}
 
 }

@@ -88,6 +88,47 @@ public class ThreeSumProblem {
      return (r1==-1 || r2==-1 || r3==-1)?Collections.<Integer>emptyList():Arrays.asList(xs.get(r1),xs.get(r2), xs.get(r3));
  }
  
+ //3 sum 0 , return all possible triplets in ascending order
+public ArrayList<ArrayList<Integer>> threeSum(ArrayList<Integer> xs) {
+     
+     Collections.sort(xs);
+     int n = xs.size();
+     ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+     for(int i=0;i<n && xs.get(i) <= 0;i++){
+         
+         int currElem = xs.get(i);
+         if(i > 0 && xs.get(i-1) == currElem){
+             continue;
+         }
+         int currRemaining = 0-currElem;
+         int lo = i+1;
+         int hi = xs.size()-1;
+         boolean isStarted = false;
+         while(lo < hi){
+             if(isStarted && xs.get(lo-1) == xs.get(lo)){
+                 lo++;
+                 continue;
+             }
+             int currSum = xs.get(lo) + xs.get(hi);
+             if(currSum == currRemaining ){
+                 //found the result
+                 res.add(new ArrayList<Integer>(Arrays.asList(currElem,xs.get(lo),xs.get(hi))));
+                 lo++;
+                 hi--;
+                  isStarted = true;
+                 //break;
+             }else if(currSum > currRemaining){
+                 hi--;
+             }else{
+                 lo++;
+                  isStarted = true;
+             }
+             
+         }
+     }
+    return res; 
+ }
+ 
  @Test
  public void testThreeSum(){
 	 assertEquals(Arrays.asList(1,4,24), threeSum(Arrays.asList(10, 7, 24, 99, 100, 1, 4), 29) );

@@ -1936,48 +1936,9 @@ reorder it to:
 			    }
 		 
 		 //DP
-		 // max product subarray - Kadane's algorithm (variation)
-		 public int maxProduct(final List<Integer> A) {
-			  int maxTillNow = A.get(0);
-			 int  minArrSumAtCurrPos = A.get(0);
-			 int  maxArrSumAtCurrPos = A.get(0);
-			  
-			  for(int i=1;i<A.size();i++){
-				  int tmpMin = Math.min(A.get(i), Math.min(minArrSumAtCurrPos*A.get(i), maxArrSumAtCurrPos*A.get(i)));
-				  int tmpMax = Math.max(minArrSumAtCurrPos*A.get(i),Math.max(maxArrSumAtCurrPos*A.get(i),A.get(i)));
-				  
-				  minArrSumAtCurrPos = tmpMin;
-				  maxArrSumAtCurrPos = tmpMax;
-				  
-				  if(maxArrSumAtCurrPos > maxTillNow){
-					  maxTillNow = maxArrSumAtCurrPos;
-				  }
-			  }
-			  
-			  return maxTillNow;
-		    }
+		
 		 
-		 public int threeSumClosest(ArrayList<Integer> A, int B) {
-			 java.util.Collections.sort(A);
-			 int res = Integer.MAX_VALUE;
-			 int minSum = -1;
-			 for(int i=0;i<A.size();i++){
-				 int k = i +1;
-				 int j = A.size()-1;
-				 while(k<j){
-					 int currDiff = Math.abs(B - (A.get(i)+A.get(k) + A.get(j))) ;
-					 minSum = currDiff<res?(A.get(i)+A.get(k) + A.get(j)):minSum;
-					 res = currDiff<res?currDiff:res;
-					 System.out.println(currDiff+" --- "+minSum);
-					 if(B < (A.get(i)+A.get(k) + A.get(j))){
-						j--;
-					 }else{
-						 k++;
-					 }
-				 }
-			 }
-			 return minSum;
-		    }
+		 
 		 
 		 public static long countInversions(final ArrayList<Integer> as){
 				
@@ -2189,40 +2150,32 @@ reorder it to:
 			return d==Integer.MAX_VALUE || d<0?"":s.substring(head, head+d);
 		}
 		
-		//dungeon and knight
-		//WRONG
-		 public int calculateMinimumHP(ArrayList<ArrayList<Integer>> grid) {
-			 int maxRows = grid.size();
-			 int maxCols = grid.get(grid.size()-1).size();
-			 int currHealth = grid.get(0).get(0);
-			 int[] currXY = new int[]{0,0};
-			 
-			 java.util.Stack<int[]> pathsToExplore = new  java.util.Stack<int[]>();
-			 
-			 
-			 
-			 while(currXY[0]<maxRows-1 && currXY[1]<maxCols-1){
-				 int tmpX=currXY[0], tmpY=currXY[1];
-				 if(grid.get(currXY[0]).get(currXY[1]+1) > grid.get(currXY[0]+1).get(currXY[1]+1)){
-					 tmpY++;
-				 }else{
-					 tmpX++;
-					 tmpY++;
-					 
+		
+		 public ArrayList<String> prettyJSON(String inpStr) {
+			 String[] inpWords = inpStr.split(",");
+			 StringBuilder indents = new StringBuilder();
+			 ArrayList<String> res = new ArrayList<String>();
+			 String indentStr = "";
+			 int indentTop = -1;
+			 for(int i=0;i<inpWords.length;i++){
+				 if(("]".equals(inpWords[i]) || "}".equals(inpWords[i])) && indentTop >= 0){
+					 indents.deleteCharAt(indentTop--);
+					 indentStr = indents.toString();
 				 }
-				 
-				 if(grid.get(currXY[0]+1).get(currXY[1]) > grid.get(tmpX).get(tmpY)){
-					 tmpX = currXY[0]+1;
-					 tmpY = currXY[1];
+				 res.add(indentStr+inpWords[i]);
+				 if("[".equals(inpWords[i]) || "{".equals(inpWords[i])){
+					 indents.append("\t");
+					 indentTop++;
+					 indentStr = indents.toString();
+				 }else if(("]".equals(inpWords[i]) || "}".equals(inpWords[i])) && indentTop >= 0){
+					 indents.deleteCharAt(indentTop--);
+					 indentStr = indents.toString();
 				 }
-				 currXY[0] = tmpX;
-				 currXY[1] = tmpY;
-				 currHealth += grid.get(currXY[0]).get(currXY[1]);
 			 }
-			 
-			 return currHealth>0?0:-currHealth;
-			 
+			 return res;
 		    }
+		
+		
 		 
 		  public int jump1(ArrayList<Integer> xs) {
 			  int[] minJumps = new int[xs.size()];
@@ -2312,41 +2265,55 @@ reorder it to:
 		    }
 		  
 		  
-		  // first increasing , then decreasing subsequence - bitonic subsequence
-		  public int longestSubsequenceLength(final List<Integer> xs) {
-			  if(xs.size() == 0){
-    	  	      return 0;
-    	  	  }
-			  int[] lis = new int[xs.size()];
-			  int[] lds = new int[xs.size()];
-			  Arrays.fill(lis, 1);
-			  Arrays.fill(lds, 1);
-			  int n = xs.size();
-			  int res=Integer.MIN_VALUE;
-			  for(int i=1;i<n;i++){
-				  for(int j=0;j<i;j++){
-					  if(xs.get(i) > xs.get(j)){
-						  lis[i] = Math.max(lis[i], lis[j]+1);
-					  }
-				  }
-				  
-			  }
+		  
+		  
+		  public ArrayList<ArrayList<Integer>> permute(ArrayList<Integer> xs) {
+		      ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+			   permuteFrom(res , 0, xs.toArray(new Integer[0]));
+			   return res;
 			  
-			  for(int i=n-1;i>=0;i--){
-				  for(int j=i+1;j<n;j++){
-					  if(xs.get(i) > xs.get(j)){
-						  lds[i] = Math.max(lds[i],lds[j]+1);
-					  }
-				  }
-			  }
-			  
-			  for(int i=0;i<n;i++){
-				  if((lis[i]+lds[i]-1)>res){
-					  res = lis[i]+lds[i]-1;
-				  }
-			  }
-			  return res;
 		    }
+		  
+		  private void permuteFrom(ArrayList<ArrayList<Integer>> res , int startingPos , Integer[]  xs) {
+			  
+			  if( startingPos == xs.length-1){
+				  res.add(new ArrayList<Integer>(Arrays.asList(xs)));
+			  }
+			  
+			  for(int i = startingPos;i<xs.length;i++){
+				  swapInArr(xs,startingPos,i);
+				  permuteFrom(res , startingPos+1 ,  xs);
+				  swapInArr(xs,startingPos,i);
+			  }
+			  
+		  }
+		  
+		  private void swapInArr(Integer[] xs,int i , int j){
+			  Integer tmp  = xs[j];
+			  xs[j]  = xs[i];
+			  xs[i] = tmp;
+			  
+		  }
+		  
+		 
+		  public ArrayList<Integer> grayCode(int n) {
+			  ArrayList<Integer> res = null ;
+			  if(n==1){
+				  res = new ArrayList<Integer>();
+				  res.add(0);
+				  res.add(1);
+				  return res;
+			  }
+			  res = grayCode(n-1);
+			  int currMSBSetVal = (int)Math.pow(2,n-1);
+			  int tmpSz = res.size();
+			  for(int j=tmpSz-1;j>=0;j--){
+				  res.add(res.get(j) + currMSBSetVal);
+			  }
+			  
+			  return res;
+		  }
+		  
 		 
 
 	// tests
@@ -2580,11 +2547,6 @@ reorder it to:
 	}
 
 	
-	@Test
-	public void testThreeSumClosest() {
-		assertEquals(2,threeSumClosest(new ArrayList<Integer>(Arrays.asList(-1,2,1,-4)), 1));
-		assertEquals(-1,threeSumClosest(new ArrayList<Integer>(Arrays.asList( -5, 1, 4, -7, 10, -7, 0, 7, 3, 0, -2, -5, -3, -6, 4, -7, -8, 0, 4, 9, 4, 1, -8, -6, -6, 0, -9, 5, 3, -9, -5, -9, 6, 3, 8, -10, 1, -2, 2, 1, -9, 2, -3, 9, 9, -10, 0, -9, -2, 7, 0, -4, -3, 1, 6, -3 )), -1));
-	}
 	
 	@Test
 	public void testMinimize(){
@@ -2699,13 +2661,7 @@ reorder it to:
               prepareCacheForTest("95 11 S 1 1 G 11 G 11 S 3 10 G 10 S 3 12 S 1 15 S 4 12 G 15 S 8 6 S 5 3 G 2 G 12 G 10 S 11 5 G 7 S 5 1 S 15 5 G 2 S 13 8 G 3 S 14 2 S 12 11 S 7 10 S 5 4 G 9 G 2 S 13 5 S 10 14 S 9 11 G 5 S 13 11 S 8 12 G 10 S 5 12 G 8 G 11 G 8 S 9 11 S 10 6 S 7 12 S 1 7 G 10 G 9 G 15 G 15 G 3 S 15 4 G 10 G 14 G 10 G 12 G 12 S 14 7 G 11 S 9 10 S 6 12 S 14 11 G 3 S 7 5 S 1 14 S 2 8 S 11 12 S 8 4 G 3 S 13 15 S 1 4 S 5 3 G 3 G 9 G 14 G 9 S 13 10 G 14 S 3 9 G 8 S 3 5 S 6 4 S 10 3 S 11 13 G 8 G 4 S 2 11 G 2 G 9 S 15 1 G 9 S 7 8 S 4 3 G 3 G 1 S 8 4 G 13 S 1 2 G 3"));
 	}
 	
-	@Test
-	public void testMaxProduct() {
-		assertEquals(6,maxProduct(Arrays.asList(2, 3, -2, 4)));
-		assertEquals(480,maxProduct(Arrays.asList(-2,1,-3,4,1,2,1,-5,4)));
-		assertEquals(480,maxProduct(Arrays.asList(-2,1,-3,4,1,2,1,-5,4)));
-		assertEquals(9,maxProduct(Arrays.asList(0, 0, 0, -3, -2, 0, 1, 0, 0, 0, 0, 0, -2, 0, 0, 0, 3, 3, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -3, 0, 0, 0, 0, -1, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, -2, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, -3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, 0, 0, 0, 0, 0, 0, 0, -1, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )));
-    }
+	
 	
 	@Test
 	public void testKthsmallest(){
@@ -2818,13 +2774,7 @@ reorder it to:
 	}
 	
 	
-	@Test
-	public void testLongestIncreaseDecreaseSubsequence(){
-		assertEquals(6, longestSubsequenceLength(Arrays.asList(1,11,2,10,4,5,2,1)));
-		//assertEquals(9, longestSubsequenceLength(Arrays.asList(1, 3, 5 ,6 ,4 ,8 ,4 ,3 ,2 ,1)));
-		assertEquals(3, longestSubsequenceLength(Arrays.asList(1, 1, 2, 1, 1)));
-		assertEquals(8, longestSubsequenceLength(Arrays.asList(9, 6, 1, 10, 2, 5, 12, 30, 31, 20, 22, 18)));
-	}
+	
 	
 	@Test
 	public void testMaximumGap(){
@@ -2880,6 +2830,11 @@ reorder it to:
 				,diagonal(new ArrayList<ArrayList<Integer>>(Arrays.asList(new ArrayList<Integer>(Arrays.asList(1,2,3)), new ArrayList<Integer>(Arrays.asList(4,5,6)),new ArrayList<Integer>(Arrays.asList(7,8,9))))));
 		assertEquals(new ArrayList<ArrayList<Integer>>(Arrays.asList(new ArrayList<Integer>(Arrays.asList(1)),new ArrayList<Integer>(Arrays.asList(2,3)),new ArrayList<Integer>(Arrays.asList(4))))
 				,diagonal(new ArrayList<ArrayList<Integer>>(Arrays.asList(new ArrayList<Integer>(Arrays.asList(1,2)), new ArrayList<Integer>(Arrays.asList(3,4))))));
+	}
+	
+	@Test
+	public void testGrayCode(){
+		assertEquals(new ArrayList<Integer>(Arrays.asList(0,1,3,2)),grayCode(2));
 	}
 	//utils
 	
@@ -2977,6 +2932,7 @@ public static ListNode listNodeWithCycleFromList(List<Integer> k, int cycleJoinP
 //  }
 	
 	public static void main(String[] args) {
+		System.out.println(Arrays.asList("ddd}{fdsa".split("\\{")));
 		System.out.println("suman".charAt(0));
 		System.out.println(-1 % 20);
 		Random rndGen  = new Random();
