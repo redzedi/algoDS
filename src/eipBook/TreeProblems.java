@@ -510,7 +510,7 @@ public class TreeProblems {
 		 public boolean contains(String w){
 			 MyTrieNode curr = root;
 			 int i=0;
-			 for(; i<w.length() && curr.children[w.charAt(i)-97] != null ;curr=curr.children[w.charAt(i)-97],i++);
+			 for(; i<w.length() && curr.children[w.charAt(i)-'a'] != null ;curr=curr.children[w.charAt(i)-'a'],i++);
 			 return curr.isWord && !(i<w.length());
 			// return !(i<w.length());
 		 }
@@ -705,7 +705,7 @@ public class TreeProblems {
 	
 	
 	@Test
-	public void testHoteReviewsTrie(){
+	public void testHotelReviewsTrie(){
 		assertEquals(new ArrayList<Integer>(Arrays.asList(2, 0, 1)), solve("cool_ice_wifi",new ArrayList<String>(Arrays.asList("water_is_cool", "cold_ice_drink", "cool_wifi_speed"))));
 		assertEquals(new ArrayList<Integer>(Arrays.asList(2,0,1,3)), solve("coolsai",new ArrayList<String>(Arrays.asList("cool","sai","coolsai", "coolsaii"))));
 

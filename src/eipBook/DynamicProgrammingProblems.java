@@ -13,6 +13,7 @@ public class DynamicProgrammingProblems {
 	
 	public int longestArithmaticProgression(final List<Integer> xs) {
 		int n = xs.size();
+		
 		int[][] dp = new int[n][n];
 		int maxAPLength = Integer.MIN_VALUE;
 		Collections.sort(xs);
@@ -612,6 +613,7 @@ public class DynamicProgrammingProblems {
 		// TODO Auto-generated method stub
 		System.out.println('a' == 'A');
 		System.out.println("mul --> "+(1000000L*2000000L));
+		
 
 	}
 

@@ -12,7 +12,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BinaryOperator;
+import java.util.Stack;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -461,6 +465,34 @@ public class CommonProblemsTest {
 		// return flr == clng? new double[]{ flr,as.get(flr)}: new double[]
 		// {clng,(as.get(flr)+as.get(clng))/2.0};
 
+	}
+	
+	public static double findMedianSortedArrays2(final List<Integer> xs,
+			final List<Integer> ys) {
+		double xLo = 0 , xHi = xs.size()-1 ;
+		double yLo = 0 , yHi = xs.size()-1 ;
+		double res = 0;
+		
+		while(xLo<xHi && yLo<yHi) {
+			double xMed = xHi%2==0?xs.get((int)xHi/2):(xs.get((int)xHi/2)+xs.get((int)(xHi/2)+1))/2;
+			double  yMed = xHi%2==0?ys.get((int)yHi/2):(ys.get((int)yHi/2)+ys.get((int)(yHi/2)+1))/2;
+			if(xMed == yMed) {
+				res = xMed;
+				break;
+			}else if(xMed < yMed) {
+				xLo = xHi/2;
+				yHi = yHi/2;
+			}else {
+				xHi = xHi/2;
+				yLo = yHi/2;
+				
+			}
+		}
+		return res;
+		
+			
+		
+		
 	}
 
 	// ((a % p)*(b % p)) % p = ab % p
@@ -2041,32 +2073,79 @@ reorder it to:
 			//[-1, 0, 0, 0, 3] 
 			public int solve(ArrayList<Integer> treeArr) {
 				int rootIdx = 0 , d1 = 0 , d2=0;
+				List<Integer>[] adjList = new List[treeArr.size()];
 				for(;treeArr.get(rootIdx) != -1;rootIdx++);
+				for(int i=0;i<treeArr.size();i++) {
+					if(treeArr.get(i) == -1) {
+						rootIdx = i;
+						continue;
+					}
+					if(adjList[treeArr.get(i)] == null) {
+						adjList[treeArr.get(i)] = new ArrayList<Integer>();
+					}
+					adjList[treeArr.get(i)].add(i);
+				}
+				
                 //int[] heightAnd
-				return getHeightAndDiameterOfMultiTree(treeArr, rootIdx, 0)[1];
-		    }	
+				return getHeightAndDiameterOfMultiTree(adjList, rootIdx)[1];
+		    }
+			
+		
 			//[height, diameter]
-			private int[] getHeightAndDiameterOfMultiTree(final List<Integer> treeArr,int root,int d){
-				int height = d, diameter = 0, numOfChildren = 0;
-				for(int i=0;i<treeArr.size();i++){
-					if(treeArr.get(i) == root){
-						numOfChildren++;
-						int[] currResArr = getHeightAndDiameterOfMultiTree(treeArr, i,d+1);
-						System.out.println(" curr MaxDepth  "+root+" -- "+currResArr[0]+" --- "+currResArr[1]);
-						if(currResArr[1] > diameter ){
+			private Integer[] getHeightAndDiameterOfMultiTree(final List<Integer>[] treeArr,int root1){
+				Integer[][] resList = new Integer[treeArr.length][2];
+				
+				
+				
+			BiFunction<Integer, List<Integer>,Runnable> processNodeCreator = (idx,chldrn) -> 
+			() -> {
+				int diameter = 0;
+			
+				int[] top2ChildHeights = new int[] {0,0};
+				List<Integer[]> chldResList = chldrn.stream().map(x->resList[x]).collect(Collectors.toList());
+				if (chldResList != null) {
+					for (Integer[] currResArr : chldResList) {
+						//int[] currResArr = getHeightAndDiameterOfMultiTree(treeArr, i);
+						System.out.println(" curr MaxDepth  " + idx + " -- " + currResArr[0] + " --- " + currResArr[1]);
+						if (currResArr[1] > diameter) {
 							diameter = currResArr[1];
 						}
-						if( (height + currResArr[0] - 2*d)>diameter ){
-							diameter = height + currResArr[0] - 2*d;
+
+						if (currResArr[0] > top2ChildHeights[1]) {
+							if (currResArr[0] > top2ChildHeights[0]) {
+								int tmp = top2ChildHeights[0];
+								top2ChildHeights[0] = currResArr[0];
+								top2ChildHeights[1] = tmp;
+							} else {
+
+								top2ChildHeights[1] = currResArr[0];
+							}
+
 						}
-						
-						if(currResArr[0] > height){
-							height = currResArr[0];
-						}
-					}
+					} 
 				}
-				return new int[]{height, diameter};
-				
+				resList[idx] = new Integer[]{top2ChildHeights[0]+1, top2ChildHeights[0]+top2ChildHeights[1] > diameter?top2ChildHeights[0]+top2ChildHeights[1]:diameter};
+			};
+			
+			Stack<Runnable> s2 = new Stack<>();
+			Stack<Supplier<List<Integer>>> s1 =  new Stack<>();
+			
+			Function<Integer,Supplier<List<Integer>>> fetchChildrenCreatorFn = (x) -> { return ()->{List<Integer> t = new ArrayList<>();t.add(x);if(treeArr[x] != null)t.addAll(treeArr[x]); return t;};};
+			
+			s1.push(fetchChildrenCreatorFn.apply(root1));
+			
+			while(!s1.isEmpty()) {
+				Supplier<List<Integer>> parentSup = s1.pop();
+				List<Integer> selfAndChildren = parentSup.get();
+				selfAndChildren.subList(1, selfAndChildren.size()).stream().map(fetchChildrenCreatorFn).forEach(sup->s1.push(sup));;
+				s2.push(processNodeCreator.apply(selfAndChildren.get(0),selfAndChildren.subList(1,selfAndChildren.size())));
+			}
+			
+			while(!s2.isEmpty()) {
+				Runnable chldNodeProcess = s2.pop();
+				chldNodeProcess.run();
+			}
+				return resList[root1];
 			}
 			
 			static int deletionDistance(String str1, String str2) {
@@ -2314,8 +2393,33 @@ reorder it to:
 			  return res;
 		  }
 		  
-		 
-
+		  public int searchInsert(ArrayList<Integer> a, int b) {
+			  int lo = 0 , hi = a.size()-1 , res = -1 ;
+			  while(lo < hi) {
+				  int mid = (lo+hi)/2 ;
+				  if(a.get(mid) == b) {
+					  res = mid;
+					  break;
+				  }else if(a.get(mid) < b) {
+					  lo = mid+1;
+				  }else {
+					  hi = mid-1;
+				  }
+				  
+			  }
+			  if(res == -1) {
+				  if(a.get(lo) < b) {
+					  res = lo+1;
+				  }else {
+					  
+					  res = lo;
+				  }
+			  }
+			  return res;
+		    }
+		  
+		  
+		  
 	// tests
 
 	// public static ArrayList<Integer> createIntegerArray
@@ -2473,33 +2577,33 @@ reorder it to:
 	public void testFindMedianSortedArray() {
 		assertEquals(
 				16,
-				findMedianSortedArrays(Arrays.asList(1, 12, 15, 26, 38),
+				findMedianSortedArrays1(Arrays.asList(1, 12, 15, 26, 38),
 						Arrays.asList(2, 13, 17, 30, 45)), 0);
 		assertEquals(
 				3.0,
-				findMedianSortedArrays(Arrays.asList(1, 4, 7),
+				findMedianSortedArrays1(Arrays.asList(1, 4, 7),
 						Arrays.asList(2, 3)), 0);
 		assertEquals(
 				20,
-				findMedianSortedArrays(new ArrayList<Integer>(),
+				findMedianSortedArrays1(new ArrayList<Integer>(),
 						Arrays.asList(20)), 0);
 		assertEquals(
 				3,
-				findMedianSortedArrays(
+				findMedianSortedArrays1(
 						Arrays.asList(-40, -25, 5, 10, 14, 28, 29, 48),
 						Arrays.asList(-48, -31, -15, -6, 1, 8)), 0);
 		assertEquals(
 				-20.0,
-				findMedianSortedArrays(
+				findMedianSortedArrays1(
 						Arrays.asList(-50, -41, -40, -19, 5, 21, 28),
 						Arrays.asList(-50, -21, -10)), 0);
 		assertEquals(
 				11.5,
-				findMedianSortedArrays(Arrays.asList(0, 23),
+				findMedianSortedArrays1(Arrays.asList(0, 23),
 						new ArrayList<Integer>()), 0);
 		assertEquals(
 				5.0,
-				findMedianSortedArrays(
+				findMedianSortedArrays1(
 						Arrays.asList(-50, -47, -36, -35, 0, 13, 14, 16),
 						Arrays.asList(-31, 1, 9, 23, 30, 39)), 0);
 
@@ -2836,6 +2940,25 @@ reorder it to:
 	public void testGrayCode(){
 		assertEquals(new ArrayList<Integer>(Arrays.asList(0,1,3,2)),grayCode(2));
 	}
+	
+	/*
+	 * [], 5 → 2
+[], 2 → 1
+[1,3,5,6], 7 → 4
+[1,3,5,6], 0 → 0
+	 */
+	
+	@Test
+	public void testSearchInsert() {
+		assertEquals(2,searchInsert(new ArrayList<Integer>(Arrays.asList(1,3,5,6)), 5));
+		assertEquals(1,searchInsert(new ArrayList<Integer>(Arrays.asList(1,3,5,6)), 2));
+		assertEquals(4,searchInsert(new ArrayList<Integer>(Arrays.asList(1,3,5,6)), 7));
+		assertEquals(0,searchInsert(new ArrayList<Integer>(Arrays.asList(1,3,5,6)), 0));
+		assertEquals(2,searchInsert(new ArrayList<Integer>(Arrays.asList(1,3,5,6)), 4));
+		assertEquals(149,searchInsert(new ArrayList<Integer>(Arrays.asList(3, 4, 18, 19, 20, 27, 28, 31, 36, 42, 44, 71, 72, 75, 82, 86, 88, 97, 100, 103, 105, 107, 110, 116, 118, 119, 121, 122, 140, 141, 142, 155, 157, 166, 176, 184, 190, 199, 201, 210, 212, 220, 225, 234, 235, 236, 238, 244, 259, 265, 266, 280, 283, 285, 293, 299, 309, 312, 317, 335, 341, 352, 354, 360, 365, 368, 370, 379, 386, 391, 400, 405, 410, 414, 416, 428, 433, 437, 438, 445, 453, 457, 458, 472, 476, 480, 485, 489, 491, 493, 501, 502, 505, 510, 511, 520, 526, 535, 557, 574, 593, 595, 604, 605, 612, 629, 632, 633, 634, 642, 647, 653, 654, 656, 658, 686, 689, 690, 691, 709, 716, 717, 737, 738, 746, 759, 765, 775, 778, 783, 786, 787, 791, 797, 801, 806, 815, 820, 822, 823, 832, 839, 841, 847, 859, 873, 877, 880, 886, 904, 909, 911, 917, 919, 937, 946, 948, 951, 961, 971, 979, 980, 986, 993)), 902));
+	}
+	
+
 	//utils
 	
 	private ArrayList<Integer> prepareCacheForTest(String testDesc){
