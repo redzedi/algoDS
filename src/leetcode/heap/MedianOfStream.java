@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode.heap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,9 +12,11 @@ class MedianFinder {
 	private PriorityQueue<Integer> minQ;
 
     public MedianFinder() {
-        maxQ = new PriorityQueue<>((x,y)->y-x);
-        minQ = new PriorityQueue<>((x,y)->x-y);
+        maxQ = new PriorityQueue<>((x,y)->y-x);// first part - will have larger set when n is odd. else will have same number of elements as minQ.
+        minQ = new PriorityQueue<>((x,y)->x-y); // second part 
     }
+    
+    //
     
     public void addNum(int num) {
        if(maxQ.isEmpty() || num<maxQ.peek()) {
@@ -25,7 +27,8 @@ class MedianFinder {
        
     	   if(maxQ.size() - minQ.size() >1 ) {
     		   minQ.offer(maxQ.poll());
-    	   }if(minQ.size() > maxQ.size()  ) {
+    	   }
+    	   if(minQ.size() > maxQ.size()  ) {
     		   maxQ.offer(minQ.poll());
     		   
     	   }

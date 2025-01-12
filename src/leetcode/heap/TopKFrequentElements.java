@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode.heap;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
@@ -50,6 +50,8 @@ public class TopKFrequentElements {
 		  
 	    }
 	  //O(n) time possible with quick select algo
+	  // same as quicksort but a different stopping condition - stop when you have the partitioned set of size k .
+	  // individual ordering does not matter
 	  
 	  
 	  @Test
