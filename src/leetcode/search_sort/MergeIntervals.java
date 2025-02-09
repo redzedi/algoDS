@@ -1,4 +1,4 @@
-package leetcode;
+package leetcode.search_sort;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

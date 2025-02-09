@@ -97,7 +97,6 @@ public class TreeTraversals {
 			 System.out.println("pushing to s2 --> "+curr.val);
 			 s2.push(curr);
 		 }
-		 Iterator<TreeNode> s2Itr = s2.listIterator();
 		 while(!s2.isEmpty()){
 			 res.add(s2.pop().val);
 		 }
@@ -105,17 +104,17 @@ public class TreeTraversals {
 	    }
 	 
 	 public ArrayList<Integer> postOrderTraversal_1Stack(TreeNode node) {
-	        Stack<TreeNode> S = new Stack<TreeNode>();
+	        Stack<TreeNode> stk = new Stack<TreeNode>();
 	        ArrayList<Integer> list = new ArrayList<Integer>();
 	          
 	        // Check for empty tree
 	        if (node == null)
 	            return list;
-	        S.push(node);
+	        stk.push(node);
 	        TreeNode prev = null;
-	        while (!S.isEmpty()) 
+	        while (!stk.isEmpty()) 
 	        {
-	            TreeNode current = S.peek();
+	            TreeNode current = stk.peek();
 	  
 	            /* go down the tree in search of a leaf an if so process it 
 	            and pop stack otherwise move down */
@@ -123,12 +122,12 @@ public class TreeTraversals {
 	                                        prev.right == current) 
 	            {
 	                if (current.left != null)
-	                    S.push(current.left);
+	                    stk.push(current.left);
 	                else if (current.right != null)
-	                    S.push(current.right);
+	                    stk.push(current.right);
 	                else
 	                {
-	                    S.pop();
+	                    stk.pop();
 	                    list.add(current.val);
 	                }
 	  
@@ -139,10 +138,10 @@ public class TreeTraversals {
 	            else if (current.left == prev) 
 	            {
 	                if (current.right != null)
-	                    S.push(current.right);
+	                    stk.push(current.right);
 	                else
 	                {
-	                    S.pop();
+	                    stk.pop();
 	                    list.add(current.val);
 	                }
 	                  
@@ -151,7 +150,7 @@ public class TreeTraversals {
 	            } 
 	            else if (current.right == prev) 
 	            {
-	                S.pop();
+	                stk.pop();
 	                list.add(current.val);
 	            }
 	  
