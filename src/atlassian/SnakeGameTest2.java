@@ -11,6 +11,8 @@ import org.junit.Test;
 
 class SnakeGame {
 	
+	//https://leetcode.com/problems/design-snake-game/description/?envType=company&envId=atlassian&favoriteSlug=atlassian-six-months
+	
 	private final int boardWidth;
 	private final int boardHeight;
 	private final int[][] food;

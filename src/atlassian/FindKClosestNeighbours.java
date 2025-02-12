@@ -10,6 +10,11 @@ import org.junit.Test;
 
 public class FindKClosestNeighbours {
 	
+	//https://leetcode.com/problems/find-k-closest-elements/description/?envType=company&envId=atlassian&favoriteSlug=atlassian-six-months
+	
+	
+	
+	//binary search with a custom matching criteria
 	     public List<Integer> findClosestElements(int[] arr, int k, int x) {
 			 
 			 int lo =0 , hi=arr.length-1, midx=-1 , lx = -1, hx=-1;

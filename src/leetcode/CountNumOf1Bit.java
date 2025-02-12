@@ -22,10 +22,13 @@ public class CountNumOf1Bit {
     @Test
     public void testHammingWeight() {
     	assertEquals(31,hammingWeight(-3));
+    	assertEquals(2,hammingWeight(3));
     }
     
     public static void main(String[] args) {
 		System.out.println(String.format("%d", (0xffffffff)));
+		
+		System.out.println((43^13)^13);
 	}
 
 }

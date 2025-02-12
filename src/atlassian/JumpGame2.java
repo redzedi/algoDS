@@ -10,6 +10,7 @@ public class JumpGame2 {
 	
   // https://leetcode.com/problems/jump-game-ii/?envType=company&envId=atlassian&favoriteSlug=atlassian-three-months	
 	
+	//greedy algorithm
 	 public int jump(int[] nums) {
 	        // The starting range of the first jump is [0, 0]
 	        int answer = 0, n = nums.length;

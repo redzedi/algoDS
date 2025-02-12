@@ -89,5 +89,9 @@ public class Jdk21NewFeaturesTest {
 		
 		//extSvc.awaitTermination(5, TimeUnit.SECONDS);
 	}
+	
+	public static void main(String[] args) {
+		
+	}
 
 }

@@ -20,6 +20,8 @@ public class FindHighAccessEmployees {
 	
 	//https://leetcode.com/problems/high-access-employees/description/?envType=company&envId=atlassian&favoriteSlug=atlassian-three-months
 	
+	
+	// 2-pointer problem
 	 public List<String> findHighAccessEmployees(List<List<String>> access_times) {
 		 
 		 
