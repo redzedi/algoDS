@@ -2,13 +2,20 @@ package atlassian;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
 import java.util.stream.IntStream;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.junit.Test;
 
@@ -90,8 +97,102 @@ public class Jdk21NewFeaturesTest {
 		//extSvc.awaitTermination(5, TimeUnit.SECONDS);
 	}
 	
-	public static void main(String[] args) {
+	record Person(String name, int age) {}
+	
+	public static void main(String[] args) throws ScriptException {
+		localTypeInference();
 		
+		textBlock();
+		
+		//doesn't work needs some work to make it work with Graal.js
+		//embeddedJSScriptEngine();
+		
+		instanceofPatternMatching();
+		
+		switchExpression();
+		
+		
+	}
+
+
+	private static void switchExpression() {
+		System.out.println("String length "+getStringLength("This is a very very very long string"));
+		System.out.println("String length "+getStringLength(11));
+		System.out.println("String length "+getStringLength(null));
+		
+		var kid = new Person("kid",1);
+		var adult = new Person("adult",19);
+		
+		System.out.println(kid+" can Vote ? -- "+canVote(kid));
+		System.out.println(adult+" can Vote ? -- "+canVote(adult));
+	}
+
+
+	private static boolean canVote(Person kid) {
+		boolean canVote = switch(kid) {
+		case Person(String name, int age) when age>18 -> true;
+		default -> false;
+		};
+		return canVote;
+	}
+
+
+	private static void instanceofPatternMatching() {
+		Object a = "this is actually a string";
+		
+		if( a instanceof String s) {
+			System.out.println("reversed the string "+s.toUpperCase());
+		}
+	}
+
+
+	private static int getStringLength(Object a) {
+		return switch(a) {
+		case String s  -> s.length();
+		case null -> -1;
+		default ->0;
+		};
+	}
+
+
+	private static void textBlock() throws ScriptException {
+		String myTextBlock= """
+				    <html>
+				       <body>
+				           <h1>Hello World!!!</h1>
+				       </body>
+				    </html>
+				""";
+	
+		System.out.println("Printing the html page \n "+myTextBlock);
+		
+		
+	}
+
+
+	private static void embeddedJSScriptEngine() throws ScriptException {
+		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+		List<ScriptEngineFactory> engines = new ScriptEngineManager().getEngineFactories();
+
+		System.out.println(engines);
+		for (ScriptEngineFactory f : engines) {
+		    System.out.println(f.getLanguageName() + " " + f.getEngineName() + " " + f.getNames());
+		}
+		Object obj = engine.eval("""
+		                         function hello() {
+		                             print('"Hello, world"');
+		                         }
+		                         
+		                         hello();
+		                         """);
+	}
+
+
+	private static void localTypeInference() {
+		var xs = Arrays.asList(1,2,3);
+	    for(var x:xs) {
+	    	System.out.println(x);
+	    }
 	}
 
 }
