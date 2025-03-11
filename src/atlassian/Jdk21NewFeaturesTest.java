@@ -101,6 +101,7 @@ public class Jdk21NewFeaturesTest {
 	
 	public static void main(String[] args) throws ScriptException {
 		localTypeInference();
+
 		
 		textBlock();
 		
@@ -193,6 +194,7 @@ public class Jdk21NewFeaturesTest {
 	    for(var x:xs) {
 	    	System.out.println(x);
 	    }
+
 	}
 
 }
