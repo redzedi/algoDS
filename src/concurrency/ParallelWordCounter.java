@@ -316,6 +316,7 @@ public class ParallelWordCounter implements AutoCloseable {
     }
     
     public static void main(String[] args) {
+    	
         try (ParallelWordCounter counter = new ParallelWordCounter(Path.of("input.txt"), Runtime.getRuntime().availableProcessors())) {
             counter.countWords(20)
                 .entrySet().stream()
