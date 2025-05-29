@@ -2,6 +2,9 @@ package salesforce;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.BitSet;
+
 import org.junit.Test;
 
 public class SmallestSubstringWIthIdenticalChar {
@@ -119,6 +122,22 @@ public class SmallestSubstringWIthIdenticalChar {
 		assertEquals(2,minLength("011", 0));
 		
 		assertEquals(2,minLength("0000", 1));
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(6>>1);
+		int[][] t = new int[2][2];
+		//t[1][1] =0;
+		System.out.println(t[1][0]);
+		System.out.println(t[0].length);
+		ArrayList<Integer>[] adjLst = new ArrayList[11];
+		String[] ss = new String[2];
+		BitSet n = new BitSet(5);
+		n.set(1);
+		System.out.println(n.nextSetBit(2));
+		
+		
+ 		
 	}
 
 }
